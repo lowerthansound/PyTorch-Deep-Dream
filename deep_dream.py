@@ -82,7 +82,7 @@ def main():
     print("Deep dream images")
     for image_path in INPUT_DIR.iterdir():
 
-        print('  ' + image_path)
+        print(f'  {image_path}')
 
         # Load image from input
         image = Image.open(image_path)
