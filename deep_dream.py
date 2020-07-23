@@ -1,5 +1,6 @@
 import argparse
 import os
+import pathlib
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -58,7 +59,6 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
 def main():
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_image", type=str, default="input/supermarket.jpg", help="path to input image")
     parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
     parser.add_argument("--at_layer", default=27, type=int, help="layer at which we modify image to maximize outputs")
     parser.add_argument("--lr", default=0.01, help="learning rate")
@@ -73,26 +73,28 @@ def main():
     if torch.cuda.is_available():
         model = model.cuda()
 
-    # Deep dream images found in input/
-    # Save outputs to output/
+    # Deep dream images found in 'input'
+    # Save outputs to 'output'
+    input_dir = pathlib.Path('input')
+    for image_path in input_dir.iter():
 
-    # Load image
-    image = Image.open(args.input_image)
+        # Load image
+        image = Image.open(image_path)
 
-    # Extract deep dream image
-    dreamed_image = deep_dream(
-        image,
-        model,
-        iterations=args.iterations,
-        lr=args.lr,
-        octave_scale=args.octave_scale,
-        num_octaves=args.num_octaves,
-    )
+        # Extract deep dream image
+        dreamed_image = deep_dream(
+            image,
+            model,
+            iterations=args.iterations,
+            lr=args.lr,
+            octave_scale=args.octave_scale,
+            num_octaves=args.num_octaves,
+        )
 
-    # Save and plot image
-    os.makedirs("output", exist_ok=True)
-    filename = args.input_image.split("/")[-1]
-    plt.imsave(f"output/{filename}", dreamed_image)
+        # Save image
+        os.makedirs("output", exist_ok=True)
+        filename = image_path.name
+        plt.imsave(f"output/{filename}", dreamed_image)
 
 
 if __name__ == "__main__":
