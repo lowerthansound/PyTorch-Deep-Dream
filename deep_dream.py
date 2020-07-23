@@ -61,7 +61,7 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
 
 
 def main():
-    # Parse args
+    print("Parse arguments")
     parser = argparse.ArgumentParser()
     parser.add_argument("--at_layer", default=27, type=int, help="layer at which we modify image to maximize outputs")
     parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
@@ -70,15 +70,17 @@ def main():
     parser.add_argument("--num_octaves", default=10, help="number of octaves")
     args = parser.parse_args()
 
-    # Define the model
+    print("Load/Define model")
     network = models.vgg19(pretrained=True)
     layers = list(network.features.children())
     model = nn.Sequential(*layers[: (args.at_layer + 1)])
     if torch.cuda.is_available():
         model = model.cuda()
 
-    # Deep dream images
+    print("Deep dream images")
     for image_path in INPUT_DIR.iter():
+
+        print('  ' + image_path)
 
         # Load image from input
         image = Image.open(image_path)
