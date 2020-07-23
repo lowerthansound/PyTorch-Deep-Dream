@@ -15,6 +15,10 @@ from PIL import Image
 from utils import deprocess, preprocess, clip
 
 
+INPUT_DIR = pathlib.Path('input')
+OUTPUT_DIR = pathlib.Path('output')
+
+
 def dream(image, model, iterations, lr):
     """ Updates the image to maximize outputs for n iterations """
     Tensor = torch.cuda.FloatTensor if torch.cuda.is_available() else torch.FloatTensor
@@ -73,15 +77,13 @@ def main():
     if torch.cuda.is_available():
         model = model.cuda()
 
-    # Deep dream images found in 'input'
-    # Save outputs to 'output'
-    input_dir = pathlib.Path('input')
-    for image_path in input_dir.iter():
+    # Deep dream images
+    for image_path in INPUT_DIR.iter():
 
-        # Load image
+        # Load image from input
         image = Image.open(image_path)
 
-        # Extract deep dream image
+        # Deep dream
         dreamed_image = deep_dream(
             image,
             model,
@@ -91,10 +93,9 @@ def main():
             num_octaves=args.num_octaves,
         )
 
-        # Save image
-        os.makedirs("output", exist_ok=True)
-        filename = image_path.name
-        plt.imsave(f"output/{filename}", dreamed_image)
+        # Save image to output
+        output = OUTPUT_DIR / image_path.filename
+        plt.imsave(str(output), dreamed_image)
 
 
 if __name__ == "__main__":
