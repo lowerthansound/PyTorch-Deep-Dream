@@ -11,7 +11,7 @@ preprocess = transforms.Compose([transforms.ToTensor(), transforms.Normalize(mea
 def deprocess(image_np):
     image_np = image_np.squeeze().transpose(1, 2, 0)
     image_np = image_np * std.reshape((1, 1, 3)) + mean.reshape((1, 1, 3))
-    image_np = np.clip(image_np, 0.0, 255.0)
+    image_np = np.clip(image_np, 0.0, 1.0)
     return image_np
 
 
