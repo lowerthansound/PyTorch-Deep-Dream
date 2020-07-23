@@ -1,15 +1,24 @@
-import torch
-import torch.nn as nn
-from torch.autograd import Variable
-from torchvision import models
-import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
+print("Import things") # Importing can take quite a while
+
 import argparse
 import os
+import pathlib
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torch.nn as nn
 import tqdm
 import scipy.ndimage as nd
+from torchvision import models
+from torch.autograd import Variable
+from PIL import Image
+
 from utils import deprocess, preprocess, clip
+
+
+INPUT_DIR = pathlib.Path('input')
+OUTPUT_DIR = pathlib.Path('output')
 
 
 def dream(image, model, iterations, lr):
@@ -53,41 +62,45 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
     return deprocess(dreamed_image)
 
 
-if __name__ == "__main__":
+def main():
+    print("Parse arguments")
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input_image", type=str, default="images/supermarket.jpg", help="path to input image")
-    parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
     parser.add_argument("--at_layer", default=27, type=int, help="layer at which we modify image to maximize outputs")
+    parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
     parser.add_argument("--lr", default=0.01, help="learning rate")
     parser.add_argument("--octave_scale", default=1.4, help="image scale between octaves")
     parser.add_argument("--num_octaves", default=10, help="number of octaves")
     args = parser.parse_args()
 
-    # Load image
-    image = Image.open(args.input_image)
-
-    # Define the model
+    print("Load model")
     network = models.vgg19(pretrained=True)
     layers = list(network.features.children())
     model = nn.Sequential(*layers[: (args.at_layer + 1)])
     if torch.cuda.is_available():
         model = model.cuda()
-    print(network)
 
-    # Extract deep dream image
-    dreamed_image = deep_dream(
-        image,
-        model,
-        iterations=args.iterations,
-        lr=args.lr,
-        octave_scale=args.octave_scale,
-        num_octaves=args.num_octaves,
-    )
+    print("Deep dream images")
+    for image_path in INPUT_DIR.iterdir():
 
-    # Save and plot image
-    os.makedirs("outputs", exist_ok=True)
-    filename = args.input_image.split("/")[-1]
-    plt.figure(figsize=(20, 20))
-    plt.imshow(dreamed_image)
-    plt.imsave(f"outputs/output_{filename}", dreamed_image)
-    plt.show()
+        print(f'  {image_path}')
+
+        # Load image from input
+        image = Image.open(image_path)
+
+        # Deep dream
+        dreamed_image = deep_dream(
+            image,
+            model,
+            iterations=args.iterations,
+            lr=args.lr,
+            octave_scale=args.octave_scale,
+            num_octaves=args.num_octaves,
+        )
+
+        # Save image to output
+        output = OUTPUT_DIR / image_path.name
+        plt.imsave(str(output), dreamed_image)
+
+
+if __name__ == "__main__":
+    main()
