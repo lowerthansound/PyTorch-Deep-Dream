@@ -80,7 +80,7 @@ def main():
         model = model.cuda()
 
     print("Deep dream images")
-    for image_path in INPUT_DIR.iter():
+    for image_path in INPUT_DIR.iterdir():
 
         print('  ' + image_path)
 
