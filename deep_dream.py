@@ -63,9 +63,6 @@ def main():
     parser.add_argument("--num_octaves", default=10, help="number of octaves")
     args = parser.parse_args()
 
-    # Load image
-    image = Image.open(args.input_image)
-
     # Define the model
     network = models.vgg19(pretrained=True)
     layers = list(network.features.children())
@@ -73,6 +70,9 @@ def main():
     if torch.cuda.is_available():
         model = model.cuda()
     print(network)
+
+    # Load image
+    image = Image.open(args.input_image)
 
     # Extract deep dream image
     dreamed_image = deep_dream(
@@ -85,12 +85,9 @@ def main():
     )
 
     # Save and plot image
-    os.makedirs("outputs", exist_ok=True)
+    os.makedirs("output", exist_ok=True)
     filename = args.input_image.split("/")[-1]
-    plt.figure(figsize=(20, 20))
-    plt.imshow(dreamed_image)
-    plt.imsave(f"outputs/output_{filename}", dreamed_image)
-    plt.show()
+    plt.imsave(f"output/{filename}", dreamed_image)
 
 
 if __name__ == "__main__":
