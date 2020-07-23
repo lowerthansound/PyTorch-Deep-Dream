@@ -54,6 +54,7 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
 
 
 def main():
+    # Parse arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_image", type=str, default="input/supermarket.jpg", help="path to input image")
     parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
@@ -70,6 +71,8 @@ def main():
     if torch.cuda.is_available():
         model = model.cuda()
 
+    # Deep dream images found in input/
+    # Save outputs to output/
     # Load image
     image = Image.open(args.input_image)
 
