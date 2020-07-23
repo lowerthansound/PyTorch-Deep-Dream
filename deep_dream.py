@@ -69,7 +69,6 @@ def main():
     model = nn.Sequential(*layers[: (args.at_layer + 1)])
     if torch.cuda.is_available():
         model = model.cuda()
-    print(network)
 
     # Load image
     image = Image.open(args.input_image)
