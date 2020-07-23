@@ -61,7 +61,7 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
 
 
 def main():
-    # Parse arguments
+    # Parse args
     parser = argparse.ArgumentParser()
     parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
     parser.add_argument("--at_layer", default=27, type=int, help="layer at which we modify image to maximize outputs")
