@@ -1,3 +1,5 @@
+print("Import things") # Importing can take quite a while
+
 import argparse
 import os
 import pathlib
@@ -70,7 +72,7 @@ def main():
     parser.add_argument("--num_octaves", default=10, help="number of octaves")
     args = parser.parse_args()
 
-    print("Load/Define model")
+    print("Load model")
     network = models.vgg19(pretrained=True)
     layers = list(network.features.children())
     model = nn.Sequential(*layers[: (args.at_layer + 1)])
