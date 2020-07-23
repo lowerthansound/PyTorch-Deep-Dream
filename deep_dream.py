@@ -1,14 +1,16 @@
-import torch
-import torch.nn as nn
-from torch.autograd import Variable
-from torchvision import models
-import numpy as np
-import matplotlib.pyplot as plt
-from PIL import Image
 import argparse
 import os
+
+import matplotlib.pyplot as plt
+import numpy as np
+import torch
+import torch.nn as nn
 import tqdm
 import scipy.ndimage as nd
+from torchvision import models
+from torch.autograd import Variable
+from PIL import Image
+
 from utils import deprocess, preprocess, clip
 
 
@@ -73,6 +75,7 @@ def main():
 
     # Deep dream images found in input/
     # Save outputs to output/
+
     # Load image
     image = Image.open(args.input_image)
 
