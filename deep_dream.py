@@ -53,7 +53,7 @@ def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
     return deprocess(dreamed_image)
 
 
-if __name__ == "__main__":
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--input_image", type=str, default="input/supermarket.jpg", help="path to input image")
     parser.add_argument("--iterations", default=20, help="number of gradient ascent steps per octave")
@@ -91,3 +91,7 @@ if __name__ == "__main__":
     plt.imshow(dreamed_image)
     plt.imsave(f"outputs/output_{filename}", dreamed_image)
     plt.show()
+
+
+if __name__ == "__main__":
+    main()
