@@ -98,7 +98,7 @@ def main():
         )
 
         # Save image to output
-        output = OUTPUT_DIR / image_path.filename
+        output = OUTPUT_DIR / image_path.name
         plt.imsave(str(output), dreamed_image)
 
 
