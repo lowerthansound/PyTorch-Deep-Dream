@@ -60,7 +60,7 @@ def main():
 
         # Save timings
         elapsed_time = t1 - t0
-        with (OUTPUT_DIR / 'timings.txt').open(mode='w') as f:
+        with (OUTPUT_DIR / 'timings.txt').open(mode='a') as f:
             f.write(f"{name}: {elapsed_time:.1f}s\n")
 
 
