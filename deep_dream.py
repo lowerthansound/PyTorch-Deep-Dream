@@ -3,6 +3,7 @@ print("Import things") # Importing can take quite a while
 import argparse
 import os
 import pathlib
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -19,33 +20,48 @@ from utils import deprocess, preprocess, clip
 
 INPUT_DIR = pathlib.Path('input')
 OUTPUT_DIR = pathlib.Path('output')
+CONFIGS = [
+    # num_octaves octave_scale iterations step_size
+    # [10, 1.4, 20, 0.01],
+    [ 8, 1.4, 4, 0.05],
+    [ 9, 1.4, 4, 0.05],
+    [10, 1.4, 4, 0.05],
+]
+
 
 
 def main():
+
     args = get_args()
     model = get_model(args.layer)
 
-    print("Deep dream")
-    for image_path in INPUT_DIR.iterdir():
+    image = Image.open(INPUT_DIR / 'sky.jpeg')
 
-        print(f'  {image_path}')
+    for c in CONFIGS:
 
-        # Load image from input
-        image = Image.open(image_path)
+        t0 = time()
 
-        # Deep dream
+        # Dream image
         dreamed_image = deep_dream(
             image,
             model,
-            num_octaves=args.num_octaves,
-            octave_scale=args.octave_scale,
-            iterations=args.iterations,
-            lr=args.step_size,
+            num_octaves=c[0],
+            octave_scale=c[1],
+            iterations=c[2],
+            lr=c[3],
         )
 
+        t1 = time()
+
         # Save image to output
-        output = OUTPUT_DIR / image_path.name
+        name = f"output_{c[0]}-{c[1]:.2f}-{c[2]}-{c[3]:.2f}.jpeg"
+        output = OUTPUT_DIR / name
         plt.imsave(str(output), dreamed_image)
+
+        # Save timings
+        elapsed_time = t1 - t0
+        with (OUTPUT_DIR / 'timings.txt').open(mode='w') as f:
+            f.write(f"{name}: {elapsed_time:.1f}s\n")
 
 
 def get_args():
