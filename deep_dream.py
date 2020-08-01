@@ -58,7 +58,7 @@ def main():
                 num_octaves=10,
                 octave_scale=1.4,
                 iterations=10,
-                lr=0.01,
+                lr=0.02,
             )
 
             t2 = time()
