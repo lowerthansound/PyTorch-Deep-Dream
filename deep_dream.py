@@ -43,9 +43,9 @@ def main():
 
             t0 = time()
 
-            new_model = nn.Sequential(*base_layers[0:layer+1])
+            model = nn.Sequential(*base_layers[0:layer+1])
             if torch.cuda.is_available():
-                new_model = new_model.cuda()
+                model = model.cuda()
 
             print("Dream")
 
