@@ -39,7 +39,7 @@ def main():
 
         try:
 
-            print("Creating model up until layer {layer}")
+            print(f"Creating model up until layer {layer}")
 
             t0 = time()
 
