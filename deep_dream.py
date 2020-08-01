@@ -54,7 +54,7 @@ def main():
         t1 = time()
 
         # Save image to output
-        name = f"output_{c[0]}-{c[1]:.2f}-{c[2]}-{c[3]:.2f}.jpeg"
+        name = f"output_{c[0]:02d}-{c[1]:.2f}-{c[2]:02d}-{c[3]:.2f}.jpeg"
         output = OUTPUT_DIR / name
         plt.imsave(str(output), dreamed_image)
 
