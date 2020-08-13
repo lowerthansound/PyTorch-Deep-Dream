@@ -22,60 +22,68 @@ OUTPUT_DIR = pathlib.Path('output')
 
 
 def main():
-    args = get_args()
-    model = get_model(args.layer)
-
-    # get images
-    # warm up the machine with sky.jpeg
-    # for each image
-    #   read image
-    #   dream on image
-    #   save result
-    #   save time
-    #   repeat 3 times to get a better idea on mtimings
-    #   save results
-    #   save min/max timings (bad because it's on cache)
-    #   this process is possiblly bad because we have smaller images saved on cache...
-    #   could we use random images? (The answer is yes!)
-    # if error,
-    #   try again with smaller number of octaves
-
-    print("Deep dream")
-    for image_path in INPUT_DIR.iterdir():
-
+    model = get_model(layer=34)
+    num_octaves = 10
+    octave_scale = 1.4
+    iterations = 20
+    step_size = 0.01
+    
+    print("Warming up with a separate image")
+    for image_path in [INPUT_DIR / 'sky.jpeg']:
         print(f'  {image_path}')
-
-        # Load image from input
         image = Image.open(image_path)
-
-        # Deep dream
         dreamed_image = deep_dream(
             image,
             model,
-            num_octaves=args.num_octaves,
-            octave_scale=args.octave_scale,
-            iterations=args.iterations,
-            lr=args.step_size,
+            num_octaves=num_octaves,
+            octave_scale=octave_scale,
+            iterations=iterations,
+            lr=step_size,
         )
-
         # Save image to output
-        output = OUTPUT_DIR / image_path.name
+        output = OUTPUT_DIR / "warmup" / image_path.name
         plt.imsave(str(output), dreamed_image)
+    
+    print("Dreaming murilo images to check the effect and measure time")
+    for image_path in INPUT_DIR.glob('murilo_*.png'):
+        print(f'  {image_path}')
+        image = Image.open(image_path)
+        for i in range(3):
+            print(f'    {i:02d}')
+            dreamed_image = deep_dream(
+                image,
+                model,
+                num_octaves=num_octaves,
+                octave_scale=octave_scale,
+                iterations=iterations,
+                lr=step_size,
+            )
+            # Save image to output
+            name = image_path.with_suffix(f'_{i:02d}.png')
+            output = OUTPUT_DIR / "murilo" / name
+            plt.imsave(str(output), dreamed_image)
 
-
-def get_args():
-
-    print("Get arguments")
-
-    parser = argparse.ArgumentParser()
-
-    parser.add_argument("--layer", type=int, default=34, help="Layer to maximize output")
-    parser.add_argument("--num-octaves", type=int, default=10, help="Number of octaves")
-    parser.add_argument("--octave-scale", type=float, default=1.4, help="Image scale between octaves")
-    parser.add_argument("--iterations", type=int, default=20, help="Number of gradient ascent steps performed for each octave")
-    parser.add_argument("--step-size", type=float, default=0.01, help="Learning rate for the gradient ascent step")
-
-    return parser.parse_args()
+    print("Dream random images to measure time")
+    for image_path in INPUT_DIR.glob('murilo_*.png'):
+        base_image = Image.open(image_path)
+        width = base_image.width
+        height = base_image.height
+        print(f'  {height}p')
+        for i in range(3):
+            print(f'    {i:02d}')
+            image = Image.effect_noise((width, height), 40)
+            dreamed_image = deep_dream(
+                image,
+                model,
+                num_octaves=num_octaves,
+                octave_scale=octave_scale,
+                iterations=iterations,
+                lr=step_size,
+            )
+            # Save image to output
+            name = f'{image.height}p_{i:02d}.png'
+            output = OUTPUT_DIR / "random" / name
+            plt.imsave(str(output), dreamed_image)
 
 
 def get_model(layer):
