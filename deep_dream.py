@@ -54,7 +54,7 @@ def get_args():
 
     parser = argparse.ArgumentParser()
 
-    parser.add_argument("--layer", type=int, default=27, help="Layer to maximize output")
+    parser.add_argument("--layer", type=int, default=34, help="Layer to maximize output")
     parser.add_argument("--num-octaves", type=int, default=10, help="Number of octaves")
     parser.add_argument("--octave-scale", type=float, default=1.4, help="Image scale between octaves")
     parser.add_argument("--iterations", type=int, default=20, help="Number of gradient ascent steps performed for each octave")
