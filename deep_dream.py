@@ -3,6 +3,7 @@ print("Import things") # Importing can take quite a while
 import argparse
 import os
 import pathlib
+from time import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -20,6 +21,11 @@ from utils import deprocess, preprocess, clip
 INPUT_DIR = pathlib.Path('input')
 OUTPUT_DIR = pathlib.Path('output')
 
+WARMUP_DIR = OUTPUT_DIR / 'warmup'
+MURILO_DIR = OUTPUT_DIR / 'murilo'
+RANDOM_DIR = OUTPUT_DIR / 'random'
+TIMING_FILE = OUTPUT_DIR / 'timing.txt'
+
 
 def main():
     model = get_model(layer=34)
@@ -27,11 +33,17 @@ def main():
     octave_scale = 1.4
     iterations = 20
     step_size = 0.01
+
+    WARMUP_DIR.mkdir(parents=True, exist_ok=True)
+    MURILO_DIR.mkdir(parents=True, exist_ok=True)
+    RANDOM_DIR.mkdir(parents=True, exist_ok=True)
+    TIMING_FILE.unlink(missing_ok=True)
     
     print("Warming up with a separate image")
     for image_path in [INPUT_DIR / 'sky.jpeg']:
         print(f'  {image_path}')
         image = Image.open(image_path)
+        t0 = time()
         dreamed_image = deep_dream(
             image,
             model,
@@ -40,9 +52,15 @@ def main():
             iterations=iterations,
             lr=step_size,
         )
+        t1 = time()
         # Save image to output
-        output = OUTPUT_DIR / "warmup" / image_path.name
+        output = WARMUP_DIR / 'sky.png'
         plt.imsave(str(output), dreamed_image)
+        # Save timing
+        with TIMING_FILE.open(mode='a') as f:
+            relative_name = output.relative_to(OUTPUT_DIR)
+            time_spent = t1 - t0
+            f.write(f"{relative_name: >20s}: {time_spend:.2f}s")
     
     print("Dreaming murilo images to check the effect and measure time")
     for image_path in INPUT_DIR.glob('murilo_*.png'):
@@ -50,6 +68,7 @@ def main():
         image = Image.open(image_path)
         for i in range(3):
             print(f'    {i:02d}')
+            t0 = time()
             dreamed_image = deep_dream(
                 image,
                 model,
@@ -58,10 +77,16 @@ def main():
                 iterations=iterations,
                 lr=step_size,
             )
+            t1 = time()
             # Save image to output
             name = image_path.with_suffix(f'_{i:02d}.png')
-            output = OUTPUT_DIR / "murilo" / name
+            output = MURILO_DIR / name
             plt.imsave(str(output), dreamed_image)
+            # Save timing
+            with TIMING_FILE.open(mode='a') as f:
+                relative_name = output.relative_to(OUTPUT_DIR)
+                time_spent = t1 - t0
+                f.write(f"{relative_name: >20s}: {time_spend:.2f}s")
 
     print("Dream random images to measure time")
     for image_path in INPUT_DIR.glob('murilo_*.png'):
@@ -72,6 +97,7 @@ def main():
         for i in range(3):
             print(f'    {i:02d}')
             image = Image.effect_noise((width, height), 40)
+            t0 = time()
             dreamed_image = deep_dream(
                 image,
                 model,
@@ -80,10 +106,16 @@ def main():
                 iterations=iterations,
                 lr=step_size,
             )
+            t1 = time()
             # Save image to output
             name = f'{image.height}p_{i:02d}.png'
-            output = OUTPUT_DIR / "random" / name
+            output = RANDOM_DIR / name
             plt.imsave(str(output), dreamed_image)
+            # Save timing
+            with TIMING_FILE.open(mode='a') as f:
+                relative_name = output.relative_to(OUTPUT_DIR)
+                time_spent = t1 - t0
+                f.write(f"{relative_name: >20s}: {time_spend:.2f}s")
 
 
 def get_model(layer):
