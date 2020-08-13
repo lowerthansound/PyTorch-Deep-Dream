@@ -25,6 +25,21 @@ def main():
     args = get_args()
     model = get_model(args.layer)
 
+    # get images
+    # warm up the machine with sky.jpeg
+    # for each image
+    #   read image
+    #   dream on image
+    #   save result
+    #   save time
+    #   repeat 3 times to get a better idea on mtimings
+    #   save results
+    #   save min/max timings (bad because it's on cache)
+    #   this process is possiblly bad because we have smaller images saved on cache...
+    #   could we use random images? (The answer is yes!)
+    # if error,
+    #   try again with smaller number of octaves
+
     print("Deep dream")
     for image_path in INPUT_DIR.iterdir():
 
