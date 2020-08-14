@@ -61,7 +61,7 @@ def main():
         plt.imsave(str(output), dreamed_image)
         # Save timing
         with TIMING_FILE.open(mode='a') as f:
-            relative_name = output.relative_to(OUTPUT_DIR)
+            relative_name = str(output.relative_to(OUTPUT_DIR))
             time_spent = t1 - t0
             f.write(f"{relative_name: >20s}: {time_spent:.2f}s")
     
@@ -87,7 +87,7 @@ def main():
             plt.imsave(str(output), dreamed_image)
             # Save timing
             with TIMING_FILE.open(mode='a') as f:
-                relative_name = output.relative_to(OUTPUT_DIR)
+                relative_name = str(output.relative_to(OUTPUT_DIR))
                 time_spent = t1 - t0
                 f.write(f"{relative_name: >20s}: {time_spent:.2f}s")
 
@@ -116,7 +116,7 @@ def main():
             plt.imsave(str(output), dreamed_image)
             # Save timing
             with TIMING_FILE.open(mode='a') as f:
-                relative_name = output.relative_to(OUTPUT_DIR)
+                relative_name = str(output.relative_to(OUTPUT_DIR))
                 time_spent = t1 - t0
                 f.write(f"{relative_name: >20s}: {time_spent:.2f}s")
 
