@@ -21,64 +21,67 @@ from utils import deprocess, preprocess, clip
 INPUT_DIR = pathlib.Path('input')
 OUTPUT_DIR = pathlib.Path('output')
 
+ERROR_FILE = OUTPUT_DIR / 'errors.txt'
+TIMINGS_FILE = OUTPUT_DIR / 'timings.txt'
+
 
 def main():
 
-    print("Load image input")
-    image = Image.open(INPUT_DIR / 'sky.jpeg')
-
-
+    # Load base model
     print("Load base model")
     base_model = models.vgg19(pretrained=True)
     base_layers = list(base_model.features.children())
-
-
     nlayers = len(base_layers)
     print(f"This model has {nlayers} layers")
+
+    # For each layer
     for layer in range(nlayers):
 
+        # Create model
         try:
-
             print(f"Creating model up until layer {layer}")
-
-            t0 = time()
-
             model = nn.Sequential(*base_layers[0:layer+1])
             if torch.cuda.is_available():
                 model = model.cuda()
-
-            print("Dream")
-
-            t1 = time()
-
-            # Deep dream image
-            dreamed_image = deep_dream(
-                image,
-                model,
-                num_octaves=10,
-                octave_scale=1.4,
-                iterations=10,
-                lr=0.02,
-            )
-
-            t2 = time()
-
-            print("Saving output and timings")
-
-            # Save image to output
-            name = f"output_layer-{layer:04d}.jpeg"
-            plt.imsave(str(OUTPUT_DIR / name), dreamed_image)
-
-            # Save timings
-            dreaming_time = t2 - t1
-            with (OUTPUT_DIR / 'timings.txt').open(mode='a') as f:
-                f.write(f"{name}: {dreaming_time:.1f}s\n")
-
         except Exception as e:
+            msg = f"Error to create layer {layer:04d}: {e}"
+            print(msg)
+            with ERROR_FILE.open(mode='a') as f:
+                f.write(msg + '\n')
+            continue
 
-            print(f"Error at layer {layer}: {e}")
-            with (OUTPUT_DIR / 'errors.txt').open(mode='a') as f:
-                f.write(f"Error at layer {layer:04d}: {e}\n")
+        # For each input
+        for image_path in INPUT.glob('*'):
+            try:
+                # Load image
+                image = Image.open(str(image_path))
+
+                # Deep dream image
+                t0 = time()
+                dreamed_image = deep_dream(
+                    image,
+                    model,
+                    num_octaves=10,
+                    octave_scale=1.4,
+                    iterations=10,
+                    lr=0.02,
+                )
+                t1 = time()
+
+                # Save output to output/layer-<LAYER>/<IMAGE>.png
+                output_path = str(OUTPUT_DIR / f'layer-{layer:04d}' / image_path.name)
+                plt.imsave(output_path, dreamed_image)
+
+                # Save timings to output/timings.txt
+                elapsed_time = t1 - t0
+                with TIMINGS_FILE.open(mode='a') as f:
+                    benchmark_line = f"{output_path: >45s}: {elapsed_time:.1f}s\n"
+                    f.write(benchmark_line)
+            except Exception as e:
+                msg = f"Error to process {image_path.name} at layer {layer:04d}: {e}"
+                print(msg)
+                with ERROR_FILE.open(mode='a') as f:
+                    f.write(msg + '\n')
 
 
 def deep_dream(image, model, iterations, lr, octave_scale, num_octaves):
