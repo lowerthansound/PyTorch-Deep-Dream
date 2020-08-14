@@ -37,7 +37,7 @@ def main():
     WARMUP_DIR.mkdir(parents=True, exist_ok=True)
     MURILO_DIR.mkdir(parents=True, exist_ok=True)
     RANDOM_DIR.mkdir(parents=True, exist_ok=True)
-    TIMING_FILE.unlink(missing_ok=True)
+    TIMING_FILE.unlink()
     
     print("Warming up with a separate image")
     for image_path in [INPUT_DIR / 'sky.jpeg']:
