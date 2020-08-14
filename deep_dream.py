@@ -41,7 +41,7 @@ def main():
         TIMING_FILE.unlink()
     except FileNotFoundError:
         pass
-    
+
     print("Warming up with a separate image")
     for image_path in [INPUT_DIR / 'sky.jpeg']:
         print(f'  {image_path}')
@@ -64,7 +64,7 @@ def main():
             relative_name = str(output.relative_to(OUTPUT_DIR))
             time_spent = t1 - t0
             f.write(f"{relative_name: >20s}: {time_spent:.2f}s\n")
-    
+
     print("Dreaming murilo images to check the effect and measure time")
     for image_path in INPUT_DIR.glob('murilo_*.png'):
         print(f'  {image_path}')
