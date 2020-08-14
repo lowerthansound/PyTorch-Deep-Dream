@@ -51,7 +51,7 @@ def main():
             continue
 
         # For each input
-        for image_path in INPUT.glob('*'):
+        for image_path in INPUT_DIR.glob('*'):
             try:
                 # Load image
                 image = Image.open(str(image_path))
