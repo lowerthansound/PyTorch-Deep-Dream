@@ -24,4 +24,16 @@ def clip(image_tensor):
 
 
 def random_image(base_img):
-    print(base_img.mode)
+    shape = np.asarray(base_img).shape
+    mode = base_img.mode
+
+    new_array = np.random.random(shape)
+    new_image = Image.fromarray(new_array, mode=mode)
+
+    print(np.asarray(base_img).shape, np.asarray(new_image).shape)
+    print(base_img.size, new_image.size)
+    print(base_img.mode, new_image.mode)
+    print(np.asarray(base_img), np.asarray(new_image))
+    raise NotImplementedError
+
+    return new_image
