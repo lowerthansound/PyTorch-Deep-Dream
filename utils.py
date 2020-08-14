@@ -30,10 +30,4 @@ def random_image(base_img):
     new_array = np.random.random(shape)
     new_image = Image.fromarray(new_array, mode=mode)
 
-    print(np.asarray(base_img).shape, np.asarray(new_image).shape)
-    print(base_img.size, new_image.size)
-    print(base_img.mode, new_image.mode)
-    print(np.asarray(base_img), np.asarray(new_image))
-    raise NotImplementedError
-
     return new_image
