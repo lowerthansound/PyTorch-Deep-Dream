@@ -27,6 +27,16 @@ TIMINGS_FILE = OUTPUT_DIR / 'timings.txt'
 
 def main():
 
+    # Clear output files
+    try:
+        ERROR_FILE.unlink()
+    except FileNotFoundError:
+        pass
+    try:
+        TIMINGS_FILE.unlink()
+    except FileNotFoundError:
+        pass
+
     # Load base model
     print("Load base model")
     base_model = models.vgg19(pretrained=True)
@@ -36,6 +46,9 @@ def main():
 
     # For each layer
     for layer in range(nlayers):
+
+        # Create output directory
+        (OUTPUT_DIR / f'layer-{layer:04d}').mkdir(parents=True, exist_ok=True)
 
         # Create model
         try:
