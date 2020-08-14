@@ -82,7 +82,7 @@ def main():
             )
             t1 = time()
             # Save image to output
-            name = image_path.with_suffix(f'_{i:02d}.png')
+            name = f"{image_path.with_suffix('').name}.{i:02d}.png"
             output = MURILO_DIR / name
             plt.imsave(str(output), dreamed_image)
             # Save timing
