@@ -15,6 +15,7 @@ from torchvision import models
 from torch.autograd import Variable
 from PIL import Image
 
+import utils
 from utils import deprocess, preprocess, clip
 
 
@@ -94,12 +95,10 @@ def main():
     print("Dream random images to measure time")
     for image_path in INPUT_DIR.glob('murilo_*.png'):
         base_image = Image.open(image_path)
-        width = base_image.width
-        height = base_image.height
-        print(f'  {height}p')
+        print(f'  {base_image.height}p')
         for i in range(3):
             print(f'    {i:02d}')
-            image = Image.effect_noise((width, height), 40)
+            image = utils.random_image(base_image)
             t0 = time()
             dreamed_image = deep_dream(
                 image,

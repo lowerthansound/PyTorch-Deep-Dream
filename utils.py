@@ -1,5 +1,6 @@
 import numpy as np
 import torch
+from PIL import Image
 from torchvision import transforms
 
 mean = np.array([0.485, 0.456, 0.406])
@@ -20,3 +21,7 @@ def clip(image_tensor):
         m, s = mean[c], std[c]
         image_tensor[0, c] = torch.clamp(image_tensor[0, c], -m / s, (1 - m) / s)
     return image_tensor
+
+
+def random_image(base_img):
+    print(base_img.mode)
