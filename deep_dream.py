@@ -110,7 +110,7 @@ def main():
             )
             t1 = time()
             # Save image to output
-            name = f'{image.height}p_{i:02d}.png'
+            name = f'{image.height}p-{i:02d}.png'
             output = RANDOM_DIR / name
             plt.imsave(str(output), dreamed_image)
             # Save timing
