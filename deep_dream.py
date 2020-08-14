@@ -30,7 +30,7 @@ TIMING_FILE = OUTPUT_DIR / 'timing.txt'
 def main():
     model = get_model(layer=34)
     num_octaves = 10
-    octave_scale = 1.4
+    octave_scale = 1.35 # minimum that works for 240p 10 octaves
     iterations = 20
     step_size = 0.01
 
