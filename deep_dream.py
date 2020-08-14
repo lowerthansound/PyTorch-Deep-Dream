@@ -63,7 +63,7 @@ def main():
         with TIMING_FILE.open(mode='a') as f:
             relative_name = str(output.relative_to(OUTPUT_DIR))
             time_spent = t1 - t0
-            f.write(f"{relative_name: >20s}: {time_spent:.2f}s")
+            f.write(f"{relative_name: >20s}: {time_spend:.2f}s\n")
     
     print("Dreaming murilo images to check the effect and measure time")
     for image_path in INPUT_DIR.glob('murilo_*.png'):
@@ -89,7 +89,7 @@ def main():
             with TIMING_FILE.open(mode='a') as f:
                 relative_name = str(output.relative_to(OUTPUT_DIR))
                 time_spent = t1 - t0
-                f.write(f"{relative_name: >20s}: {time_spent:.2f}s")
+                f.write(f"{relative_name: >20s}: {time_spend:.2f}s\n")
 
     print("Dream random images to measure time")
     for image_path in INPUT_DIR.glob('murilo_*.png'):
@@ -118,7 +118,7 @@ def main():
             with TIMING_FILE.open(mode='a') as f:
                 relative_name = str(output.relative_to(OUTPUT_DIR))
                 time_spent = t1 - t0
-                f.write(f"{relative_name: >20s}: {time_spent:.2f}s")
+                f.write(f"{relative_name: >20s}: {time_spend:.2f}s\n")
 
 
 def get_model(layer):
